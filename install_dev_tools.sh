@@ -56,7 +56,7 @@ else
 fi
 
 # Check and install Python
-PYTHON_VERSION_REQ="3.11"
+PYTHON_VERSION_REQ="3.9"
 if command -v python3 &> /dev/null; then
   PYTHON_VERSION_INS=$(python3 -c 'import sys; print(sys.version_info[0], sys.version_info[1], sep=".")')
   # Compare versions using Python itself for simplicity
