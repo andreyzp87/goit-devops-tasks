@@ -1,6 +1,10 @@
 .idea
 .env
 .vscode
+.DS_Store
+*.log
+*.tmp
+*.bak
 
 # Ignore Python cache files
 __pycache__/
