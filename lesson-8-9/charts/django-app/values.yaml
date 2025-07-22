@@ -1,0 +1,29 @@
+replicaCount: 2
+
+image:
+  repository: 704428060658.dkr.ecr.eu-central-1.amazonaws.com/lesson-9-django-app
+  tag: v1.0.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+env:
+  DEBUG: "False"
+  ALLOWED_HOSTS: "*"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80

@@ -1,0 +1,28 @@
+applications:
+  - name: django-app
+    namespace: default
+    project: default
+    source:
+      repoURL: https://github.com/andreyzp87/goit-devops-tasks.git
+      path: docker-django/django
+      targetRevision: main
+      helm:
+        valueFiles:
+          - values.yaml
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: default
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
+
+repositories:
+  - name: django-app-repo
+    url: https://github.com/andreyzp87/goit-devops-tasks.git
+    username: andreyzp87
+    password: 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
+
+repoConfig:
+  insecure: "true"
+  enableLfs: "true"

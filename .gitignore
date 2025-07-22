@@ -1,0 +1,16 @@
+.idea
+.env
+.vscode
+.DS_Store
+*.log
+*.tmp
+*.bak
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
