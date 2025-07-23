@@ -27,3 +27,11 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 2
   targetCPUUtilizationPercentage: 80
+
+django:
+  config:
+    POSTGRES_HOST: db
+    POSTGRES_POR: 5432
+    POSTGRES_DB: django
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
