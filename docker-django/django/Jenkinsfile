@@ -59,6 +59,7 @@ spec:
         container('git') {
           withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
             sh '''
+              export GITHUB_TOKEN=$GIT_PAT
               git clone https://$GIT_USERNAME:$GIT_PAT@github.com/andreyzp87/goit-devops-tasks.git
               cd goit-devops-tasks
 
@@ -69,7 +70,7 @@ spec:
 
               git add lesson-8-9/charts/django-app/values.yaml
               git commit -m "Update image tag to $IMAGE_TAG"
-              git remote set-url origin https://$GIT_USERNAME:$GIT_PAT@github.com/andreyzp87/goit-devops-tasks.git
+
               git push origin main
             '''
           }
