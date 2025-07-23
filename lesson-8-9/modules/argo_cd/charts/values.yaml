@@ -21,7 +21,7 @@ repositories:
   - name: django-app-repo
     url: https://github.com/andreyzp87/goit-devops-tasks.git
     username: andreyzp87
-    password: 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
+    password: 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
 
 repoConfig:
   insecure: "true"
