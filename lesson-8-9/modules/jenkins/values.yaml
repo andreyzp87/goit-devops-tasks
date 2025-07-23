@@ -48,7 +48,7 @@ controller:
                       scope: GLOBAL
                       id: github-token
                       username: andreyzp87
-                      password: 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
+                      password: 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
                       description: GitHub PAT
       seed-job: |
         jobs:
