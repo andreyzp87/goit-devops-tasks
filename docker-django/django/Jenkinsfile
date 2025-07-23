@@ -72,7 +72,8 @@ spec:
               git add lesson-8-9/charts/django-app/values.yaml
               git commit -m "Update image tag to $IMAGE_TAG"
 
-              git push origin main
+              export GIT_ASKPASS=/bin/echo
+              git push -f origin main
             '''
           }
         }
