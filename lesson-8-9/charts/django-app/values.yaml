@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: 704428060658.dkr.ecr.eu-central-1.amazonaws.com/lesson-9-django-app
-  tag: v1.0.16
+  tag: v1.0.17
   pullPolicy: IfNotPresent
 
 service:
