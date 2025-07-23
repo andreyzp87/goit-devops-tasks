@@ -59,7 +59,7 @@ spec:
         container('git') {
           withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PAT')]) {
             sh '''
-              git clone <https://$GIT_USERNAME:$GIT_PAT@github.com/andreyzp87/goit-devops-tasks.git>
+              git clone https://$GIT_USERNAME:$GIT_PAT@github.com/andreyzp87/goit-devops-tasks.git
               cd goit-devops-tasks/docker-django/django
 
               sed -i "s/tag: .*/tag: $IMAGE_TAG/" values.yaml
