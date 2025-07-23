@@ -20,8 +20,8 @@ applications:
 repositories:
   - name: django-app-repo
     url: https://github.com/andreyzp87/goit-devops-tasks.git
-    username: "{{ .Values.github.username }}"
-    password: "{{ .Values.github.token }}"
+    username: "${github_username}"
+    password: "${github_token}"
 
 repoConfig:
   insecure: "true"

@@ -47,8 +47,8 @@ controller:
                   - usernamePassword:
                       scope: GLOBAL
                       id: github-token
-                      username: "{{ .Values.github.username }}"
-                      password: "{{ .Values.github.token }}"
+                      username: "${github_username}"
+                      password: "${github_token}"
                       description: GitHub PAT
       seed-job: |
         jobs:
