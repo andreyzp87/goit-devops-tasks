@@ -67,11 +67,13 @@ spec:
 
               git config user.email "$COMMIT_EMAIL"
               git config user.name "$COMMIT_NAME"
+              git remote set-url origin https://${GIT_PAT}@github.com/andreyzp87/goit-devops-tasks.git
 
               git add lesson-8-9/charts/django-app/values.yaml
               git commit -m "Update image tag to $IMAGE_TAG"
 
-              git push https://$GIT_PAT@github.com/andreyzp87/goit-devops-tasks.git main
+              export GIT_ASKPASS=/bin/echo
+              git push -f origin main
             '''
           }
         }
