@@ -48,9 +48,9 @@ module "eks" {
   vpc_id           = module.vpc.vpc_id
   subnet_ids       = module.vpc.public_subnet_ids
   node_group_name  = "lesson-9-node-group"
-  instance_types   = ["t2.micro"]
-  desired_capacity = 1
-  max_capacity     = 2
+  instance_types   = ["t3.medium"]
+  desired_capacity = 2
+  max_capacity     = 3
   min_capacity     = 1
 }
 

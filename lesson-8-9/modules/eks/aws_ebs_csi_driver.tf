@@ -1,7 +1,7 @@
 resource "aws_iam_openid_connect_provider" "oidc" {
   url             = aws_eks_cluster.eks.identity[0].oidc[0].issuer
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0ecd6c6f9"]
+    thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da0ecd6c6f9", "1c58a3a8518e8759bf075b76b750d4f2df264fcd"]
 }
 
 resource "aws_iam_role" "ebs_csi_irsa_role" {
@@ -30,13 +30,15 @@ resource "aws_iam_role_policy_attachment" "ebs_irsa_policy" {
 }
 
 resource "aws_eks_addon" "ebs_csi_driver" {
-  cluster_name                  = aws_eks_cluster.eks.name
-  addon_name                    = "aws-ebs-csi-driver"
-  addon_version                 = "v1.41.0-eksbuild.1"
-  service_account_role_arn      = aws_iam_role.ebs_csi_irsa_role.arn
-  resolve_conflicts_on_update  = "PRESERVE"
+  cluster_name = aws_eks_cluster.eks.name
+  addon_name   = "aws-ebs-csi-driver"
+  # addon_version               = "v1.41.0-eksbuild.1"
+  service_account_role_arn    = aws_iam_role.ebs_csi_irsa_role.arn
+  resolve_conflicts_on_update = "PRESERVE"
 
   depends_on = [
+    aws_eks_cluster.eks,
+    aws_eks_node_group.general,
     aws_iam_openid_connect_provider.oidc,
     aws_iam_role_policy_attachment.ebs_irsa_policy
   ]
