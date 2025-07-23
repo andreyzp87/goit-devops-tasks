@@ -29,7 +29,7 @@ spec:
 
   environment {
     ECR_REGISTRY = "704428060658.dkr.ecr.eu-central-1.amazonaws.com"
-    IMAGE_NAME   = "app"
+    IMAGE_NAME   = "lesson-9-django-app"
     IMAGE_TAG    = "v1.0.${BUILD_NUMBER}"
 
     COMMIT_EMAIL = "jenkins@localhost"
