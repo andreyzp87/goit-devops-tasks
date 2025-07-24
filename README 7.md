@@ -64,7 +64,7 @@ ECR_URI=$(terraform output -raw ecr_repository_url)
 aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $ECR_URI
 
 # Перейти до каталогу з Django застосунком
-cd ../docker-django/django
+cd ../docker/django
 
 # Створити Docker-образ
 docker build -t django-app .

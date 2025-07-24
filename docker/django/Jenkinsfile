@@ -29,7 +29,7 @@ spec:
 
   environment {
     ECR_REGISTRY = "704428060658.dkr.ecr.eu-central-1.amazonaws.com"
-    IMAGE_NAME   = "lesson-9-django-app"
+    IMAGE_NAME   = "goit-devops-django-app"
     IMAGE_TAG    = "v1.0.${BUILD_NUMBER}"
 
     COMMIT_EMAIL = "jenkins@localhost"
@@ -41,7 +41,7 @@ spec:
       steps {
         container('kaniko') {
           sh '''
-            cd docker-django/django
+            cd docker/django
             /kaniko/executor \\
               --context `pwd` \\
               --dockerfile `pwd`/Dockerfile \\
@@ -63,13 +63,13 @@ spec:
               git clone https://$GIT_USERNAME:$GIT_PAT@github.com/andreyzp87/goit-devops-tasks.git
               cd goit-devops-tasks
 
-              sed -i "s/tag: .*/tag: $IMAGE_TAG/" lesson-8-9/charts/django-app/values.yaml
+              sed -i "s/tag: .*/tag: $IMAGE_TAG/" charts/django-app/values.yaml
 
               git config user.email "$COMMIT_EMAIL"
               git config user.name "$COMMIT_NAME"
               git remote set-url origin https://${GIT_PAT}@github.com/andreyzp87/goit-devops-tasks.git
 
-              git add lesson-8-9/charts/django-app/values.yaml
+              git add charts/django-app/values.yaml
               git commit -m "Update image tag to $IMAGE_TAG"
 
               export GIT_ASKPASS=/bin/echo

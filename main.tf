@@ -32,22 +32,22 @@ module "vpc" {
   public_subnets     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   private_subnets    = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
   availability_zones = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
-  vpc_name           = "lesson-9-vpc"
+  vpc_name           = "goit-devops-vpc"
 }
 
 module "ecr" {
   source       = "./modules/ecr"
-  ecr_name     = "lesson-9-django-app"
+  ecr_name     = "goit-devops-django-app"
   scan_on_push = true
 }
 
 module "eks" {
   source           = "./modules/eks"
-  cluster_name     = "lesson-9-eks-cluster"
+  cluster_name     = "goit-devops-eks-cluster"
   cluster_version  = "1.28"
   vpc_id           = module.vpc.vpc_id
   subnet_ids       = module.vpc.public_subnet_ids
-  node_group_name  = "lesson-9-node-group"
+  node_group_name  = "goit-devops-node-group"
   instance_types   = ["t3.medium"]
   desired_capacity = 2
   max_capacity     = 3

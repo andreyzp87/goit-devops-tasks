@@ -4,7 +4,7 @@ applications:
     project: default
     source:
       repoURL: https://github.com/andreyzp87/goit-devops-tasks.git
-      path: lesson-8-9/charts/django-app
+      path: charts/django-app
       targetRevision: main
       helm:
         valueFiles:
