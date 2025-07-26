@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: 704428060658.dkr.ecr.eu-central-1.amazonaws.com/lesson-9-django-app
-  tag: v1.0.19
+  tag: v1.1.19
   pullPolicy: IfNotPresent
 
 service:
@@ -28,10 +28,17 @@ autoscaling:
   maxReplicas: 2
   targetCPUUtilizationPercentage: 80
 
+postgresql:
+  host: ""      # Will be set via terraform
+  port: "5432"  # Will be set via terraform
+  database: ""  # Will be set via terraform
+  username: ""  # Will be set via terraform
+  password: ""  # Will be set via terraform
+
 django:
   config:
-    POSTGRES_HOST: db
-    POSTGRES_POR: 5432
-    POSTGRES_DB: django
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
+    POSTGRES_HOST: "{{ .Values.postgresql.host }}"
+    POSTGRES_PORT: "{{ .Values.postgresql.port }}"
+    POSTGRES_DB: "{{ .Values.postgresql.database }}"
+    POSTGRES_USER: "{{ .Values.postgresql.username }}"
+    POSTGRES_PASSWORD: "{{ .Values.postgresql.password }}"

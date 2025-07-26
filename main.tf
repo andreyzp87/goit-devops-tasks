@@ -125,14 +125,14 @@ module "rds" {
   # Common
   instance_class          = "db.t3.medium"
   allocated_storage       = 20
-  db_name                 = "myapp"
-  username                = "postgres"
-  password                = "admin123AWS23"
-  subnet_private_ids      = module.vpc.private_subnets
-  subnet_public_ids       = module.vpc.public_subnets
+  db_name                 = var.postgres_db
+  username                = var.postgres_user
+  password                = var.postgres_password
+  subnet_private_ids      = module.vpc.private_subnet_ids
+  subnet_public_ids       = module.vpc.public_subnet_ids
   publicly_accessible     = true
   vpc_id                  = module.vpc.vpc_id
-  multi_az                = true
+  multi_az                = false
   backup_retention_period = 7
   parameters = {
     max_connections            = "200"

@@ -68,3 +68,20 @@ output "jenkins_release" {
 output "jenkins_namespace" {
   value = module.jenkins.jenkins_namespace
 }
+
+output "postgres_endpoint" {
+  description = "PostgreSQL endpoint"
+  value       = module.rds.endpoint
+  sensitive   = true
+}
+
+output "postgres_database" {
+  description = "PostgreSQL database name"
+  value       = var.postgres_db
+}
+
+output "postgres_username" {
+  description = "PostgreSQL username"
+  value       = var.postgres_user
+  sensitive   = true
+}
