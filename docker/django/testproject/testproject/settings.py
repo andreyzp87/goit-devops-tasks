@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-wm18=_itjl5%r9yh@0i@smt6spjxf=y#um@$vs*ybyph&%2!p)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 
 # Application definition
@@ -74,14 +74,14 @@ WSGI_APPLICATION = 'testproject.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.postgresql',
-		'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-		'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-		'NAME': os.environ.get('POSTGRES_DB', 'postgres'),
-		'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-		'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
-	}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        'NAME': os.environ.get('POSTGRES_DB', 'postgres'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+    }
 }
 
 
