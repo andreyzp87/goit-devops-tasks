@@ -37,8 +37,6 @@ postgresql:
 
 django:
   config:
-    POSTGRES_HOST: "{{ .Values.postgresql.host }}"
-    POSTGRES_PORT: "{{ .Values.postgresql.port }}"
-    POSTGRES_DB: "{{ .Values.postgresql.database }}"
-    POSTGRES_USER: "{{ .Values.postgresql.username }}"
-    POSTGRES_PASSWORD: "{{ .Values.postgresql.password }}"
+    DEBUG: "False"
+    ALLOWED_HOSTS: "*"
+

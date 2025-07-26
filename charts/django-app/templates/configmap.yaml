@@ -3,6 +3,14 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-config
 data:
+{{- range $key, $value := .Values.env }}
+  {{ $key }}: {{ $value | quote }}
+{{- end }}
 {{- range $key, $value := .Values.django.config }}
   {{ $key }}: {{ $value | quote }}
 {{- end }}
+  POSTGRES_HOST: {{ .Values.postgresql.host | quote }}
+  POSTGRES_PORT: {{ .Values.postgresql.port | quote }}
+  POSTGRES_DB: {{ .Values.postgresql.database | quote }}
+  POSTGRES_USER: {{ .Values.postgresql.username | quote }}
+  POSTGRES_PASSWORD: {{ .Values.postgresql.password | quote }}
