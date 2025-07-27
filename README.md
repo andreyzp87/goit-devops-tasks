@@ -52,7 +52,7 @@ goit-devops-tasks/
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-username/goit-devops-tasks.git
+git clone https://github.com/andreyzp87/goit-devops-tasks.git
 cd goit-devops-tasks
 ```
 
@@ -368,10 +368,10 @@ terraform output grafana_admin_password_command
 
 ```bash
 # Get Prometheus service
-kubectl get svc -n monitoring prometheus-kube-prometheus-prometheus
+kubectl get svc -n monitoring prometheus
 
 # Port forward to access Prometheus UI locally
-kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+kubectl port-forward -n monitoring svc/prometheus 9090:9090
 
 # Access at http://localhost:9090
 ```
@@ -458,7 +458,7 @@ kubectl get pods -n monitoring
 kubectl get pv,pvc -n monitoring
 
 # Check Prometheus targets
-kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+kubectl port-forward -n monitoring svc/prometheus 9090:9090
 # Then visit http://localhost:9090/targets
 
 # Check Grafana datasources
@@ -476,29 +476,6 @@ kubectl describe application django-app -n argocd
 # Monitor resource usage
 kubectl top nodes
 kubectl top pods --all-namespaces
-```
-
-### Monitoring Troubleshooting
-
-**Prometheus Issues:**
-```bash
-# Check Prometheus configuration
-kubectl get configmap -n monitoring prometheus-kube-prometheus-prometheus-rulefiles-0 -o yaml
-
-# Check Prometheus logs
-kubectl logs -n monitoring prometheus-kube-prometheus-prometheus-0
-
-# Verify service monitors
-kubectl get servicemonitor -n monitoring
-```
-
-**Grafana Issues:**
-```bash
-# Check Grafana logs
-kubectl logs -n monitoring deployment/prometheus-grafana
-
-# Reset Grafana admin password
-kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath='{.data.admin-password}' | base64 --decode
 ```
 
 ## 📚 Additional Resources
