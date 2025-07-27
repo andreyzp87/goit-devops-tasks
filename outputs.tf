@@ -85,3 +85,24 @@ output "postgres_username" {
   value       = var.postgres_user
   sensitive   = true
 }
+
+output "prometheus_service" {
+  description = "Prometheus service"
+  value       = module.monitoring.prometheus_service
+}
+
+output "grafana_service" {
+  description = "Grafana service"
+  value       = module.monitoring.grafana_service
+}
+
+output "monitoring_namespace" {
+  description = "Monitoring namespace"
+  value       = module.monitoring.namespace
+}
+
+output "grafana_admin_password_command" {
+  description = "Command to get Grafana admin password"
+  value       = module.monitoring.grafana_admin_password
+  sensitive   = true
+}

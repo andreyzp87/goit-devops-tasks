@@ -1,6 +1,6 @@
 # GoIT DevOps Infrastructure
 
-A comprehensive DevOps infrastructure project built with Terraform, featuring AWS EKS, RDS, ECR, Jenkins, ArgoCD, and a Django application deployment pipeline.
+A comprehensive DevOps infrastructure project built with Terraform, featuring AWS EKS, RDS, ECR, Jenkins, ArgoCD, Prometheus, Grafana, and a Django application deployment pipeline.
 
 ## 🏗️ Architecture Overview
 
@@ -12,6 +12,8 @@ This project deploys a complete cloud-native infrastructure on AWS including:
 - **ECR**: Container registry for Docker images
 - **Jenkins**: CI/CD pipeline automation
 - **ArgoCD**: GitOps deployment management
+- **Prometheus**: Metrics collection and monitoring
+- **Grafana**: Metrics visualization and dashboards
 - **Django App**: Sample application with Helm charts
 
 ## 📁 Project Structure
@@ -33,6 +35,7 @@ goit-devops-tasks/
     ├── ecr/                   # Container registry module
     ├── jenkins/               # Jenkins CI/CD module
     ├── argo_cd/               # ArgoCD GitOps module
+    ├── monitoring/            # Prometheus & Grafana module
     └── s3-backend/            # Terraform state backend
 ```
 
@@ -58,11 +61,13 @@ cd goit-devops-tasks
 Create `terraform.tfvars`:
 
 ```hcl
-github_username     = "your-github-username"
-github_token        = "your-github-token"
-postgres_password   = "your-secure-password"
-postgres_db         = "myapp"
-postgres_user       = "postgres"
+github_username              = "your-github-username"
+github_token                 = "your-github-token"
+postgres_password            = "your-secure-password"
+postgres_db                  = "myapp"
+postgres_user                = "postgres"
+grafana_admin_password       = "secure-grafana-password"
+enable_monitoring_persistence = true
 ```
 
 ### 3. Initialize and Deploy
@@ -220,6 +225,50 @@ Deploys ArgoCD with GitOps applications and repository configurations.
 - ✅ GitHub repository integration
 - ✅ Self-healing applications
 
+### Monitoring Module
+
+Deploys a complete monitoring stack with Prometheus and Grafana using the kube-prometheus-stack.
+
+**Features:**
+- ✅ Prometheus for metrics collection and storage
+- ✅ Grafana for visualization and dashboards
+- ✅ AlertManager for alerting
+- ✅ Node Exporter for node metrics
+- ✅ Kube State Metrics for Kubernetes metrics
+- ✅ Pre-configured dashboards for Kubernetes monitoring
+- ✅ Persistent storage for metrics retention
+- ✅ LoadBalancer service for external access
+
+**Usage:**
+```hcl
+module "monitoring" {
+  source = "./modules/monitoring"
+  
+  namespace                = "monitoring"
+  cluster_name            = module.eks.cluster_name
+  prometheus_storage_size = "50Gi"
+  grafana_storage_size    = "10Gi"
+  grafana_admin_password  = var.grafana_admin_password
+  enable_persistence      = true
+  install_separate_grafana = false
+}
+```
+
+**Configuration Options:**
+- `prometheus_storage_size` - Storage size for Prometheus metrics (default: 50Gi)
+- `grafana_storage_size` - Storage size for Grafana data (default: 10Gi)
+- `enable_persistence` - Enable persistent storage (default: true)
+- `install_separate_grafana` - Install standalone Grafana vs integrated (default: false)
+- `grafana_admin_password` - Admin password for Grafana access
+
+**Default Dashboards Included:**
+- Kubernetes cluster overview
+- Node metrics and resource usage
+- Pod and container monitoring
+- Persistent volume metrics
+- Network monitoring
+- Application performance metrics
+
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -231,6 +280,8 @@ Deploys ArgoCD with GitOps applications and repository configurations.
 | `postgres_password` | Database password | Yes |
 | `postgres_db` | Database name | No |
 | `postgres_user` | Database username | No |
+| `grafana_admin_password` | Grafana admin password | No |
+| `enable_monitoring_persistence` | Enable monitoring persistence | No |
 
 ### AWS Resources Created
 
@@ -239,7 +290,8 @@ Deploys ArgoCD with GitOps applications and repository configurations.
 - **RDS**: 1 PostgreSQL instance (or Aurora cluster)
 - **ECR**: 1 repository with lifecycle policy
 - **IAM**: Multiple roles for EKS, RDS, and service accounts
-- **LoadBalancers**: 2 (Jenkins, ArgoCD)
+- **LoadBalancers**: 3 (Jenkins, ArgoCD, Grafana)
+- **EBS Volumes**: Multiple for persistent storage (Jenkins, Prometheus, Grafana)
 
 ## 📊 Outputs
 
@@ -251,11 +303,19 @@ terraform output eks_cluster_endpoint
 terraform output ecr_repository_url
 terraform output postgres_endpoint
 
+# Get monitoring information
+terraform output prometheus_service
+terraform output grafana_service
+terraform output grafana_admin_password_command
+
 # Access Jenkins
 kubectl get svc -n jenkins
 
 # Access ArgoCD
 kubectl get svc -n argocd
+
+# Access Grafana
+kubectl get svc -n monitoring
 ```
 
 ## 🔒 Security Best Practices
@@ -266,6 +326,8 @@ kubectl get svc -n argocd
 - ✅ Encrypted S3 state backend
 - ✅ ECR vulnerability scanning
 - ✅ Secrets stored securely in Kubernetes
+- ✅ Monitoring data retention policies
+- ✅ Secure Grafana authentication
 
 ## 📋 Common Tasks
 
@@ -289,28 +351,50 @@ kubectl get svc -n argocd argo-cd-argocd-server
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
 ```
 
-### Database Connection
+### Access Grafana
 
 ```bash
-# Get database endpoint
-terraform output postgres_endpoint
+# Get Grafana LoadBalancer URL
+kubectl get svc -n monitoring prometheus-grafana
 
-# Connect via kubectl port-forward (if in private subnet)
-kubectl port-forward svc/postgres-service 5432:5432
-psql -h localhost -U postgres -d myapp
+# Get Grafana admin password
+kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath='{.data.admin-password}' | base64 --decode
+
+# Alternative: Use terraform output
+terraform output grafana_admin_password_command
 ```
 
-### Build and Push Docker Image
+### Access Prometheus
 
 ```bash
-# Get ECR login
-aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $(terraform output -raw ecr_repository_url | cut -d'/' -f1)
+# Get Prometheus service
+kubectl get svc -n monitoring prometheus-kube-prometheus-prometheus
 
-# Build and push
-docker build -t django-app ./docker/django/
-docker tag django-app:latest $(terraform output -raw ecr_repository_url):latest
-docker push $(terraform output -raw ecr_repository_url):latest
+# Port forward to access Prometheus UI locally
+kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+
+# Access at http://localhost:9090
 ```
+
+### Monitoring Setup
+
+**Default Grafana Dashboards:**
+- **Kubernetes / Compute Resources / Cluster** - Overall cluster resource usage
+- **Kubernetes / Compute Resources / Namespace (Pods)** - Per-namespace pod metrics
+- **Kubernetes / Compute Resources / Node (Pods)** - Per-node resource utilization
+- **Node Exporter / Nodes** - Detailed node system metrics
+
+**Custom Metrics and Alerts:**
+1. Access Grafana dashboard
+2. Navigate to "+" → "Dashboard" to create custom dashboards
+3. Use PromQL queries to create custom metrics
+4. Set up alerts in AlertManager configuration
+
+**Prometheus Targets:**
+- Kubernetes API server
+- Node exporters on all nodes
+- Kube-state-metrics
+- Application metrics (if configured)
 
 ## 🧹 Cleanup
 
@@ -322,6 +406,8 @@ terraform destroy
 # - ECR images
 # - EBS volumes (if persistent)
 # - LoadBalancer-created AWS resources
+# - Prometheus metrics data
+# - Grafana dashboards and configurations
 ```
 
 ## 🛠️ Troubleshooting
@@ -345,12 +431,39 @@ terraform destroy
    - Verify security group rules
    - Check if database is in correct subnet group
 
+5. **Prometheus/Grafana pods not starting**
+   - Check if persistent volumes are properly created
+   - Verify storage class configuration
+   - Check resource limits and node capacity
+
+6. **Grafana dashboard not loading**
+   - Verify Prometheus datasource configuration
+   - Check network connectivity between Grafana and Prometheus
+   - Validate service discovery settings
+
+7. **Missing metrics in Prometheus**
+   - Check target discovery in Prometheus UI
+   - Verify service monitors and pod monitors
+   - Check network policies and security groups
+
 ### Useful Commands
 
 ```bash
 # Check EKS cluster status
 kubectl get nodes
 kubectl get pods --all-namespaces
+
+# Check monitoring stack
+kubectl get pods -n monitoring
+kubectl get pv,pvc -n monitoring
+
+# Check Prometheus targets
+kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+# Then visit http://localhost:9090/targets
+
+# Check Grafana datasources
+kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
+# Then visit http://localhost:3000
 
 # Check Terraform state
 terraform state list
@@ -359,6 +472,33 @@ terraform state show module.eks.aws_eks_cluster.eks
 # Debug ArgoCD applications
 kubectl get applications -n argocd
 kubectl describe application django-app -n argocd
+
+# Monitor resource usage
+kubectl top nodes
+kubectl top pods --all-namespaces
+```
+
+### Monitoring Troubleshooting
+
+**Prometheus Issues:**
+```bash
+# Check Prometheus configuration
+kubectl get configmap -n monitoring prometheus-kube-prometheus-prometheus-rulefiles-0 -o yaml
+
+# Check Prometheus logs
+kubectl logs -n monitoring prometheus-kube-prometheus-prometheus-0
+
+# Verify service monitors
+kubectl get servicemonitor -n monitoring
+```
+
+**Grafana Issues:**
+```bash
+# Check Grafana logs
+kubectl logs -n monitoring deployment/prometheus-grafana
+
+# Reset Grafana admin password
+kubectl get secret --namespace monitoring prometheus-grafana -o jsonpath='{.data.admin-password}' | base64 --decode
 ```
 
 ## 📚 Additional Resources
@@ -368,6 +508,9 @@ kubectl describe application django-app -n argocd
 - [Jenkins Kubernetes Plugin](https://plugins.jenkins.io/kubernetes/)
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/)
 - [Helm Documentation](https://helm.sh/docs/)
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [Grafana Documentation](https://grafana.com/docs/)
+- [Kube-Prometheus-Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
 
 ## 🤝 Contributing
 

@@ -14,4 +14,6 @@ __pycache__/
 .terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.backup
+*.tfstate*
 terraform.tfvars
+logs.txt

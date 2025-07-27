@@ -1,0 +1,56 @@
+# Prometheus configuration with Grafana included
+prometheus:
+  prometheusSpec:
+    retention: 30d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ebs-sc
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${prometheus_storage_size}
+
+# Grafana configuration (part of kube-prometheus-stack)
+grafana:
+  enabled: true
+  adminPassword: ${grafana_admin_password}
+  
+  service:
+    type: LoadBalancer
+    port: 80
+    targetPort: 3000
+
+  persistence:
+    enabled: ${enable_persistence}
+    storageClassName: ebs-sc
+    size: 10Gi
+
+  # Configure datasources
+  sidecar:
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: true
+
+  # Default dashboards
+  defaultDashboardsEnabled: true
+
+# AlertManager configuration
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ebs-sc
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+# Node exporter
+nodeExporter:
+  enabled: true
+
+# Kube state metrics
+kubeStateMetrics:
+  enabled: true

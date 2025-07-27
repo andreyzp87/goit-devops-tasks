@@ -144,3 +144,27 @@ module "rds" {
     Project     = "myapp"
   }
 }
+
+module "monitoring" {
+  source = "./modules/monitoring"
+
+  namespace    = "monitoring"
+  cluster_name = module.eks.cluster_name
+
+  # Monitoring configuration
+  prometheus_storage_size  = "10Gi"
+  grafana_storage_size     = "10Gi"
+  grafana_admin_password   = "admin123"
+  enable_persistence       = true
+  install_separate_grafana = false # Use Grafana from kube-prometheus-stack
+
+  depends_on = [
+    module.eks,
+    module.jenkins # Ensure storage class is created
+  ]
+
+  providers = {
+    helm       = helm
+    kubernetes = kubernetes
+  }
+}

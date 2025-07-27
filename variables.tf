@@ -41,3 +41,16 @@ variable "postgres_password" {
   type        = string
   sensitive   = true
 }
+
+variable "grafana_admin_password" {
+  description = "Grafana admin password"
+  type        = string
+  default     = "admin123"
+  sensitive   = true
+}
+
+variable "enable_monitoring_persistence" {
+  description = "Enable persistent storage for monitoring"
+  type        = bool
+  default     = false
+}
